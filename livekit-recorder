@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# LiveKit Screen Recorder Launcher
+echo "=== LiveKit Screen Recorder Launcher ==="
+echo "Arguments: $@"
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+echo "Script directory: $SCRIPT_DIR"
+
+# Path to the Electron app
+ELECTRON_PATH="$SCRIPT_DIR/node_modules/.bin/electron"
+MAIN_PATH="$SCRIPT_DIR/src/main.js"
+
+echo "Electron path: $ELECTRON_PATH"
+echo "Main path: $MAIN_PATH"
+
+# Set environment variables
+export NODE_ENV=development
+export LIVEKIT_APP_ID=livekit-screen-recorder
+export ELECTRON_APP_NAME="LiveKit Screen Recorder"
+
+# If we have arguments (protocol URLs), pass them as environment variable
+if [ $# -gt 0 ]; then
+    for arg in "$@"; do
+        if [[ $arg == livekit-recorder://* ]]; then
+            echo "Protocol URL detected: $arg"
+            export LIVEKIT_PROTOCOL_URL="$arg"
+            break
+        fi
+    done
+fi
+
+# Set the custom icon for the dock/taskbar
+export ELECTRON_ICON="$SCRIPT_DIR/aya-logo.png"
+echo "Setting custom icon: $ELECTRON_ICON"
+
+# Launch the app
+echo "Launching LiveKit Screen Recorder..."
+exec "$ELECTRON_PATH" "$MAIN_PATH" 

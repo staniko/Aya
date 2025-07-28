@@ -1,0 +1,93 @@
+{
+  "name": "aya-assistant-recorder",
+  "productName": "Aya Assistant",
+  "version": "0.1.1",
+  "description": "Aya Assistant - Professional AI assistant",
+  "main": "src/main.js",
+  "scripts": {
+    "dev":            "concurrently \"cross-env NODE_ENV=development npm run dev:vite\" \"cross-env NODE_ENV=development npm run dev:electron\"",
+    "dev:staging":    "concurrently \"cross-env NODE_ENV=staging     npm run dev:vite\" \"cross-env NODE_ENV=staging     npm run dev:electron\"",
+    "dev:production": "concurrently \"cross-env NODE_ENV=production  npm run dev:vite\" \"cross-env NODE_ENV=production  npm run dev:electron\"",
+    "dev:vite": "vite",
+    "dev:electron": "wait-on http://localhost:1420 && electron . --name='Aya Assistant'",
+    "dev:packed": "npm run pack && open dist/mac/Aya\\ Assistant.app",
+
+    "build":         "npm run clean && cross-env NODE_ENV=production  vite build && cross-env NODE_ENV=production  electron-builder",
+    "build:dev":     "npm run clean && cross-env NODE_ENV=development vite build && cross-env NODE_ENV=development electron-builder",
+    "build:staging": "npm run clean && cross-env NODE_ENV=staging     vite build && cross-env NODE_ENV=staging     electron-builder",
+    "build:vite": "vite build",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "clean": "rm -rf dist",
+
+    "register-protocol": "node register-protocol.js",
+    "fix-protocol": "node fix-protocol.js",
+    "test-protocol": "node test-protocol.js",
+    "test-protocol-system": "open 'livekit-recorder://auth/callback?token=test-123'"
+  },
+  "keywords": [
+    "electron",
+    "livekit",
+    "recorder",
+    "screen-recording"
+  ],
+  "author": "Aya Development Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0",
+    "wait-on": "^7.2.0"
+  },
+  "dependencies": {
+    "livekit-client": "^2.14.0",
+    "dotenv": "^16.3.1"
+  },
+  "build": {
+    "appId": "com.aya.assistant",
+    "productName": "Aya Assistant",
+    "executableName": "Aya Assistant",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "dist/**/*",
+      "src/main.js",
+      "src/preload.js",
+      "src/config.js",
+      "package.json",
+      "aya-logo.png"
+    ],
+    "protocols": [
+      {
+        "name": "Aya Assistant",
+        "schemes": [
+          "livekit-recorder"
+        ]
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": "dmg",
+      "icon": "aya-logo.png",
+      "bundleVersion": "1.0.0",
+      "executableName": "Aya Assistant",
+      "extendInfo": {
+        "CFBundleName": "Aya Assistant",
+        "CFBundleDisplayName": "Aya Assistant",
+        "CFBundleExecutable": "Aya Assistant"
+      }
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "aya-logo.png"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "aya-logo.png"
+    }
+  }
+}

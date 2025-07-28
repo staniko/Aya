@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/aya-logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/src/panels.css" />
+    <title>Aya Assistant</title>
+  </head>
+  <body>
+    
+    <div id="app">
+      <!-- Panel UI -->
+      <div id="panels-container">
+        <!-- Main Panel -->
+        <div class="main-panel">
+          <div class="panel-content">
+            <!-- Logo - Always visible -->
+            <div class="logo-section">
+              <img src="/aya-logo.png" alt="Aya" class="aya-logo">
+            </div>
+            
+            <!-- Login Controls - Only when logged out -->
+            <div class="login-controls">
+              <button id="browser-login-btn" class="browser-login-btn">Browser Login</button>
+            </div>
+            
+            <!-- Recording Controls - Only when logged in -->
+            <div class="recording-controls hidden">
+              <button id="panel-record-btn" class="panel-control-btn record-btn" title="Start/Stop Recording">
+                <span class="record-symbol">▶</span>
+              </button>
+              
+              <div class="agent-dropdown-section">
+                <label for="panel-agent-dropdown">Agent:</label>
+                <select id="panel-agent-dropdown" class="panel-agent-dropdown">
+                  <option value="default-voice">🗣️ Default voice</option>
+                  <option value="sales-voice">🗣️ Sales voice</option>
+                  <option value="default-text">💬 Default text</option>
+                  <option value="sales-hint" selected>💡 Sales hints</option>
+                </select>
+              </div>
+              
+              <div class="timer-section">
+                <span id="panel-timer" class="panel-timer">00:00</span>
+                <span id="token-display" class="token-display"></span>
+              </div>
+              
+              <button id="panel-mic-btn" class="panel-control-btn input-btn mic-btn" title="Microphone: On">
+                <span class="input-symbol mic-symbol">🎤</span>
+              </button>
+              
+              <button id="panel-audio-btn" class="panel-control-btn input-btn audio-btn" title="Computer Audio: Off">
+                <span class="input-symbol audio-symbol">🔊</span>
+              </button>
+              
+              <button id="panel-screen-btn" class="panel-control-btn input-btn screen-btn" title="Screen Share: On">
+                <span class="input-symbol screen-symbol">🖥️</span>
+              </button>
+              
+              <button id="panel-settings-btn" class="panel-control-btn settings-btn" title="Settings">
+                <span class="settings-symbol">⚙️</span>
+              </button>
+              
+              <button id="panel-debug-btn" class="panel-control-btn debug-btn hidden" title="Show Debug Panel">
+                <span class="debug-symbol">🐛</span>
+              </button>
+            </div>
+            
+            <!-- Window Controls - Always visible -->
+            <button id="minimize-btn" class="window-control-btn minimize-btn">−</button>
+            <button id="close-panel-btn" class="window-control-btn close-btn">×</button>
+          </div>
+        </div>
+
+        <!-- Panel Group Container -->
+        <div id="panel-group" class="panel-group hidden">
+          <!-- Transcript Panel -->
+          <div id="transcript-panel" class="transcript-panel hidden">
+            <div class="transcript-header">
+              <div class="transcript-title">
+                <span id="transcript-panel-title">Conversation</span>
+              </div>
+              <button id="close-transcript-btn" class="transcript-close-btn">×</button>
+            </div>
+            
+            <div class="transcript-content">
+              <div id="conversation-transcript" class="conversation-display">
+                <div class="transcript-placeholder">Conversation will appear here...</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Output Panel -->
+          <div id="output-panel" class="output-panel hidden">
+            <div class="output-header">
+              <div class="output-title">
+                <span id="output-panel-title">Assistant Output</span>
+                <button id="show-transcript-btn" class="show-transcript-btn">Show transcript</button>
+              </div>
+              <button id="close-output-btn" class="output-close-btn">×</button>
+            </div>
+            
+            <div class="output-content">
+              <!-- Text Mode Content -->
+              <div id="text-mode-content" class="output-mode-content">
+                <div id="text-responses-container" class="text-responses-container">
+                  <!-- Text responses will be populated here -->
+                </div>
+              </div>
+              
+              <!-- Hint Mode Content -->
+              <div id="hint-mode-content" class="output-mode-content">
+                <div class="importance-slider-section">
+                  <label for="output-importance-slider">Show hints of importance level:</label>
+                  <div class="slider-container">
+                    <input type="range" id="output-importance-slider" min="1" max="4" value="4" step="1">
+                    <div class="slider-labels">
+                      <span class="slider-label">1+ <br>(Urgent)</span>
+                      <span class="slider-label">2+</span>
+                      <span class="slider-label">3+</span>
+                      <span class="slider-label">4+ <br>(Info)</span>
+                    </div>
+                  </div>
+                </div>
+                <div id="hints-container" class="hints-container">
+                  <!-- Hints will be populated here -->
+                </div>
+              </div>
+              
+              <!-- Voice Mode Content -->
+              <div id="voice-mode-content" class="output-mode-content">
+                <div class="voice-mode-message">
+                  <span class="voice-icon">🗣️</span>
+                  <span class="voice-text">Voice agent is active, no text output</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Hidden compatibility elements for main app functionality -->
+            <div style="display: none;">
+              <div id="text-response-display">
+                <div class="text-response-placeholder">Latest model response will appear here...</div>
+              </div>
+              <div id="importance-slider-section">
+                <input type="range" id="importance-slider" min="1" max="4" value="4" step="1">
+              </div>
+            </div>
+          </div>
+
+        <!-- Settings Panel -->
+        <div id="settings-panel" class="settings-panel hidden">
+          <div class="settings-header">
+            <div class="settings-tabs">
+              <button id="display-tab" class="settings-tab active" data-tab="display">Display</button>
+              <button id="inputs-tab" class="settings-tab" data-tab="inputs">Inputs</button>
+            </div>
+            <button id="close-settings-btn" class="settings-close-btn">×</button>
+          </div>
+          
+          <div class="settings-content">
+            <!-- Display Tab Content -->
+            <div id="display-content" class="tab-content active">
+              <div class="settings-section">
+                <label>Theme:</label>
+                <button id="settings-theme-toggle" class="settings-button">🌙 Dark</button>
+              </div>
+              <div class="settings-section">
+                <label>Opacity:</label>
+                <div class="opacity-control-compact">
+                  <input type="range" id="settings-opacity-slider" min="0.2" max="1" step="0.01" value="1">
+                  <span id="settings-opacity-value">100%</span>
+                </div>
+              </div>
+              <div class="settings-section">
+                <label>Debug Options:</label>
+                <div class="checkbox-control-compact">
+                  <input type="checkbox" id="settings-debug-button-toggle" class="settings-checkbox">
+                  <label for="settings-debug-button-toggle" class="checkbox-label">Show Debug button</label>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Inputs Tab Content -->
+            <div id="inputs-content" class="tab-content">
+              <div class="settings-section">
+                <label>Audio Testing:</label>
+                <div class="audio-levels-compact">
+                  <div class="audio-level-item-compact">
+                    <span>🎤</span>
+                    <div class="audio-level-bar-compact">
+                      <div class="audio-level-background"></div>
+                      <div class="audio-level-fill" id="settings-microphone-level"></div>
+                    </div>
+                  </div>
+                  <div class="audio-level-item-compact">
+                    <span>🔊</span>
+                    <div class="audio-level-bar-compact">
+                      <div class="audio-level-background"></div>
+                      <div class="audio-level-fill" id="settings-computer-audio-level"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="settings-section">
+                <label>Screen:</label>
+                <select id="settings-screen-dropdown" class="settings-select">
+                  <option value="">Loading screens...</option>
+                </select>
+              </div>
+              
+              <div class="settings-section">
+                <label>Preview:</label>
+                <div id="settings-screen-preview" class="screen-preview-compact">
+                  <div class="preview-placeholder">No screen selected</div>
+                </div>
+              </div>
+              
+              <div class="settings-section">
+                <button id="settings-connect-btn" class="settings-button">Connect Inputs</button>
+                <span id="settings-inputs-status" class="inputs-status-compact">Not connected</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Hidden compatibility elements for main app functionality -->
+          <div style="display: none;">
+            <select id="screen-source-dropdown">
+              <option value="">Loading screens...</option>
+            </select>
+            <div id="screen-preview-container">
+              <div class="preview-placeholder">No screen selected</div>
+            </div>
+            <button id="connect-inputs-btn">Connect Inputs</button>
+            <button id="disconnect-inputs-btn">Disconnect Inputs</button>
+            <div id="inputs-status">Inputs not connected</div>
+            <div id="microphone-level"></div>
+            <div id="computer-audio-level"></div>
+            <button id="refresh-screens-btn">Refresh</button>
+            <input type="range" id="opacity-slider" min="0.2" max="1" step="0.01" value="1">
+            <span id="opacity-value">100%</span>
+            <button id="theme-toggle-btn">🌙 Dark</button>
+            </div>
+          </div>
+
+          <!-- Debug Panel -->
+          <div id="debug-panel" class="debug-panel-container hidden">
+            <div class="debug-header">
+              <div class="debug-title">
+                <span id="debug-panel-title">Debug & Status</span>
+              </div>
+              <button id="close-debug-btn" class="debug-close-btn">×</button>
+            </div>
+            
+            <div class="debug-content">
+              <!-- Debug Status Section -->
+              <div class="debug-section">
+                <label>Debug Messages:</label>
+                <div id="debug-status" class="debug-status-display">
+                  Debug: Waiting for events...
+                </div>
+              </div>
+              
+              <!-- Status Section -->
+              <div class="debug-section">
+                <label>System Status:</label>
+                <div class="status-items">
+                  <div id="recording-status" class="status-item">Ready to record</div>
+                  <div id="livekit-status" class="status-item">LiveKit: Disconnected</div>
+                </div>
+              </div>
+              
+              <!-- Permissions Section -->
+              <div class="debug-section">
+                <label>Permissions:</label>
+                <div class="permission-items">
+                  <div class="permission-item-debug">
+                    <span>🎤 Microphone Access</span>
+                    <span id="mic-status" class="status-indicator">❌</span>
+                  </div>
+                  <div class="permission-item-debug">
+                    <span>🖥️ Screen Capture</span>
+                    <span id="screen-status" class="status-indicator">❌</span>
+                  </div>
+                  <div class="permission-item-debug">
+                    <span>🔊 Audio Output</span>
+                    <span id="audio-status" class="status-indicator">❌</span>
+                  </div>
+                </div>
+                
+                <div class="debug-buttons">
+                  <button id="request-permissions-btn" class="debug-button">Request Permissions</button>
+                  <button id="refresh-permissions-btn" class="debug-button">Refresh Status</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <!-- Debug container for display of window border -->
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
